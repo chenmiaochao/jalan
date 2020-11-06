@@ -1,0 +1,410 @@
+body{
+	font-family: 'M PLUS Rounded 1c', sans-serif;
+	max-width: 1280px;
+	margin: 0 auto;
+}
+.hidden {
+    text-indent: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+}
+.none{
+    display: none;
+}
+.jaran{
+	/* display:flex; */
+	font-family: 'M PLUS Rounded 1c', sans-serif;
+}
+header{
+    background-image: url(../img/jalan.png);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    height: 6em;
+
+}
+#left{
+	width: 100%;
+    margin: 0 auto;
+    padding-bottom: 4rem;
+    border-radius: 2rem;
+}
+#map{
+	height: 40vh;
+	width: 90%;
+    border-radius: 40px;
+    margin: 0 auto;
+}
+    
+#wrapper {
+    margin: 0.5rem auto;
+	width: 90%;
+	border-radius: 40px;
+	background-color: #FFDEE9;
+	background-image: linear-gradient(0deg, #FFDEE9 0%, #B5FFFC 49%);
+	height:auto;
+    transition: max-height ease-out 1s; 
+
+}
+.search_container{
+	position: relative;
+	box-sizing: border-box;
+	display: block;
+	padding: 3px 10px;
+	border-radius: 20px;
+	height: 2.2em;
+	width: 90%;
+	overflow: hidden;
+    background: #3879D9;
+    margin: 1rem auto;
+  }
+  .search_container input[type="text"]{
+	border: none;
+	height: 2.0em;
+	background: #3879D9;
+  }
+  .search_container input[type="text"]:focus {
+	outline: 0;
+  }
+  .search_container input[type="submit"]{
+	cursor: pointer;
+	font-size: 1.3em;
+	border: none;
+	background: none;
+	color: #fff;
+	position: absolute;
+	height: 2.5em;
+	right: 8px;
+	top: -10px;
+	outline : none;
+  }
+  .search_container ::-webkit-input-placeholder {
+	color: #fff;
+  }
+.sec {
+    margin: 0 auto;
+    padding-top:0.5rem;
+
+}
+.sec .sec-item{
+
+	overflow: hidden;
+	width: 80%;
+    margin: 2em auto;
+    text-align: center;
+
+}
+.sec .sec-item select {
+	border-radius: 20px;
+	width: 100%;
+	padding-right: 1em;
+	cursor: pointer;
+	text-indent: 0.01px;
+	text-overflow: ellipsis;
+	border: none;
+	outline: none;
+	background: transparent;
+	background-image: none;
+	box-shadow: none;
+	-webkit-appearance: none;
+	appearance: none;
+}
+.sec .sec-item select::-ms-expand {
+    display: none;
+}
+.sec .sec-item.cp_sl01 {
+	position: relative;
+	border: 1px solid #bbbbbb;
+	border-radius: 20px;
+	background: #ffffff;
+}
+.sec .sec-item.cp_sl01::before {
+	position: absolute;
+	top: 0.8em;
+	right: 0.9em;
+	width: 0;
+	height: 0;
+	padding: 0;
+	content: '';
+	border-left: 6px solid transparent;
+	border-right: 6px solid transparent;
+	border-top: 6px solid #666666;
+	pointer-events: none;
+}
+.sec .sec-item.cp_sl01 select {
+	padding: 8px 38px 8px 8px;
+	color: #666666;
+}
+#output {
+    width: 80%;
+    margin:0 auto;
+    border-radius: 10px;
+    display: grid;
+    gap: 10px;
+	grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+	background-color: #FFDEE9;
+	background-image: linear-gradient(181deg, #FFDEE9 0%, #B5FFFC 100%);
+	
+    height:auto;
+    transition: max-height ease-out 2s; 
+}
+#output img{
+    width: 100%;
+    height: 100%;
+}
+#output.hover{
+    height:auto;
+}
+#output .catch{
+    font-size: 130%;
+    font-weight: 110%;
+}
+#output a {
+	position: relative;
+	padding: 0.1em 0.3em;
+	transition: all 0.3s ease;
+	text-decoration: none;
+	color: pink;
+}
+#output a::before {
+	position: absolute;
+	bottom: -2px;
+	left: 0;
+	width: 100%;
+	height: 2px;
+	content: '';
+	transition: all 0.3s ease;
+	background-color: pink;
+}
+#output a:hover::before {
+    border-radius: 10px;
+	transform: scaleY(4);
+}
+.box{
+    
+    border-radius: 20px;
+    background-color:rgba(77,198,222,0.2);
+    padding: 15px;
+    margin: 5px;
+    text-align: center;
+    margin-top: 10px;
+    text-align: center;
+    border-right:0.3px ridge pink ;
+    border-bottom:0.3px ridge pink ;
+    
+}
+/* leftの中のsec */
+#left .sec{
+    width: 80%;
+    margin: 0.3rem auto;
+}
+#gridbox2{
+    display: grid;
+    gap: 10px;
+    grid-template-columns: repeat(auto-fit, minmax(38%, 1fr));
+    font-size: 80%;
+}
+#left .sec .sec-item2 h3{
+    width: 120%;
+}
+#weather{
+	width: 90%;
+    margin: 0 auto;
+    display: grid;
+    gap: 10px;
+    grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+    font-size: 80%;
+}
+#weather p{
+    margin-top: 1em;
+}
+#weather p img{
+    width: 100%;
+    height: 100%;
+}
+
+#left .sec .sec-item2 {
+	/* overflow: hidden; */
+	width: 50%;
+	margin: 0.2em auto;
+    text-align: center;
+}
+#left .sec .sec-item2-1{
+    background-color: #8EC5FC;
+    background-image: linear-gradient(62deg, #8EC5FC 0%, #E0C3FC 100%);
+    -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, .1);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, .1);
+}
+.sec .sec-item2 select {
+	border-radius: 20px;
+	width: 50%;
+	padding-right: 1em;
+	cursor: pointer;
+	text-indent: 0.01px;
+	text-overflow: ellipsis;
+	border: none;
+	outline: none;
+	background: transparent;
+	background-image: none;
+	box-shadow: none;
+	-webkit-appearance: none;
+	appearance: none;
+}
+.sec .sec-item2 select::-ms-expand {
+    display: none;
+}
+.sec .sec-item2.cp_sl01 {
+	position: relative;
+	border: 1px solid #bbbbbb;
+	border-radius: 20px;
+	background: #ffffff;
+}
+.sec .sec-item2.cp_sl01::before {
+	position: absolute;
+	top: 0.8em;
+	right: 0.9em;
+	width: 0;
+	height: 0;
+	padding: 0;
+	content: '';
+	border-left: 6px solid transparent;
+	border-right: 6px solid transparent;
+	border-top: 6px solid #666666;
+	pointer-events: none;
+}
+.sec .sec-item2.cp_sl01 select {
+	padding: 8px 38px 8px 8px;
+	color: #666666;
+}
+
+.box2{
+    display: flex;
+    flex-direction: column;
+    margin: 0.3em auto;
+}
+/* clera button */
+.clear-button{
+    /* width: 80%; */
+    border-radius: 100vh;
+    margin: 2em auto;
+    height: 35px;
+}
+button.btn-gradient {
+    margin: 0 auto;
+    font-family: 'M PLUS Rounded 1c', sans-serif;
+    color:black;
+    border: 2px solid #fff;
+    border-radius: 20px;
+    background-color: #8EC5FC;
+    background-image: linear-gradient(62deg, #8EC5FC 0%, #E0C3FC 100%);
+    -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, .1);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, .1);
+  }
+  
+  button.btn-gradient:hover {
+    -webkit-transform: translate(0, -2px);
+    transform: translate(0, -2px);
+    color: #fff;
+    -webkit-box-shadow: 0 8px 15px rgba(0, 0, 0, .2);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, .2);
+  }
+
+
+.drop {
+    cursor: pointer;
+    display: block;
+    background-color: #8BC6EC;
+    background-image: linear-gradient(90deg, #8BC6EC 0%, #a2a5e1 50%, #ffffff 100%);
+    border-radius: 20px;
+    width: 40%;
+    color: white;
+    margin: 0 auto;
+    text-align: center;
+}
+.drop + input{
+    display: none; /* hide the checkboxes */
+}
+
+.drop + input + div{
+    display:none;
+}
+
+.drop + input:checked + div{
+    display:block;
+}
+footer{
+	background-color: pink;
+	margin:0 auto;
+}
+footer p{
+	text-align:center;
+	color:white;
+}
+#page_top{
+	width: 50px;
+	height: 50px;
+	position: fixed;
+	right: 0;
+	bottom: 0;
+	background: #3f98ef;
+	opacity: 0.6;
+	border-radius: 50%;
+  }
+  #page_top a{
+	position: relative;
+	display: block;
+	width: 50px;
+	height: 50px;
+	text-decoration: none;
+  }
+  #page_top a::before{
+	font-family: 'Font Awesome 5 Free';
+	font-weight: 900;
+	content: '\f102';
+	font-size: 25px;
+	color: #fff;
+	position: absolute;
+	width: 25px;
+	height: 25px;
+	top: -5px;
+	bottom: 0;
+	right: 0;
+	left: 0;
+	margin: auto;
+	text-align: center;
+  }
+
+#gmap-info-window {
+	position: relative;
+	width: 15.625em;
+	/* padding: 25px 30px; */
+	border: 2px solid #EC492C;
+	border-radius: 30px;
+	/* background-color: #fff; */
+	background-color: pink;
+	background-image: linear-gradient(62deg, #8EC5FC 0%, #E0C3FC 100%);	
+	text-align:center;
+	font-family: 'M PLUS Rounded 1c', sans-serif;
+
+}
+#gmap-info-window:before {
+	display: inline-block;
+	position: absolute;
+	left: 50%;
+	width: 20px;
+	/* height: 10px; */
+	transform: translate(-50%, 0);
+	background: url(https://82mou.github.io/infobox/img/gmap-info-window-frame-point.png) no-repeat 0 0;
+	content: '';
+}
+#gmap-info-window-title {
+	color: #EC492C;
+	font-size: 16px;
+	font-weight: bold;
+	text-align: center;
+}
+#gmap-info-window-address {
+	font-size: 12px;
+	font-weight: bold;
+
+}

@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    
+    <title>じゃぁん</title>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.4/css/all.css">
+    <!-- モバイル css -->
+    <link rel="stylesheet" href="./css/phone.css">
+    <!-- ターブレット css -->
+    <link rel="stylesheet" href="./css/pad.css" media="screen and (min-width:560px)">
+    <!-- pc css -->
+    <link rel="stylesheet" href="./css/pc.css" media="screen and (min-width:960px)">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <script src="./js/jquery-3.4.1.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@300;900&display=swap" rel="stylesheet">
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDK_pHIYUE9KCkv7r6hPhMWir4U97uOCtE"></script>
+    <script src="https://82mou.github.io/infobox/lib/infobox.js"></script>
+</head>
+<body class="body">
+<header></header>
+<main class="jaran">
+    <div id="left">
+        <div id="player"></div>
+        <div id="map"></div>
+        <div id="content">
+
+        <div class="search_container">
+            <section class="sec-item">
+                <input type="text" class="geoInput" size="40" placeholder="キーワード、ホテル、旅館名など">
+                <input type="submit" class="button" value="検索">
+            </section>
+        </div>
+
+        <label class="drop" for="_1">MAPオプション</label>
+        <input id="_1" type="checkbox">
+        <div class="sec">
+
+            <span class="box2">
+                <section class="sec-item2 cp_sl01 sec-item2-1">
+                    マップの種類<select name="mapType" id="mapType">
+                        <option value="0">ROADMAP</option>
+                        <option value="1">SATELLITE</option>
+                        <option value="2">HYBRID</option>
+                        <option value="3">TERRAIN</option>
+                    </select>
+                </section>
+                <button class="clear-button btn btn-gradient">clearボタン</button><br><br>
+            </span>
+        
+            <div id="gridbox2">
+                <section class="sec-item2">
+                    <h3>地図ボタン</h3>
+                    true<input type="radio" name="mapButton" value="true" checked>
+                    false<input type="radio" name="mapButton" value="false">
+                </section>
+
+                <section class="sec-item2">
+                    <h3>全画面表示ボタン</h3>
+                    true<input type="radio" name="fullScreen"" value="true" checked>
+                    false<input type="radio" name="fullScreen" value="false">
+                </section>
+                
+                <section class="sec-item2">
+                    <h3>post man</h3>
+                    true<input type="radio" name="streetViewControl"" value="true" checked>
+                    false<input type="radio" name="streetViewControl" value="false">
+                </section>
+                
+                <section class="sec-item2">
+                    <h3>zoom Control</h3>
+                    true<input type="radio" name="zoomControl"" value="true" checked>
+                    false<input type="radio" name="zoomControl" value="false">
+                </section>
+            </div>
+        <!-- <button class="button">ボタン</button><br><br> -->
+        <!-- <div class="output1"></div> -->
+        </div>
+        </div>
+    </div>
+    <div id="wrapper">
+
+
+        <div class="sec">
+
+            <section class="sec-item cp_sl01">
+                地域<select name="reg" id="reg">
+
+                </select>
+            </section>
+            <section class="sec-item cp_sl01">
+            都道府県<select name="prefecture" id="prefecture">
+                
+            </select>
+
+            </section>
+
+                <section class="sec-item cp_sl01">
+                大エリア<select name="l_area" id="l_area">
+                    
+                </select>
+            </section>
+
+            <section class="sec-item cp_sl01">
+                小エリア<select name="s_area" id="s_area">
+                </select>
+            </section>
+        </div>
+        <div id="weather"></div>
+
+
+    </div>
+    </main>
+
+    <div id="output"></div>
+    <div id="page_top"><a href="#"></a></div>
+    <footer class="none"><p>そこら辺はもうど田舎だよ</p></footer>
+
+    <script>
+    $(function(){
+    //
+    //ページロードするときのマップ
+    var map1;
+    var weather;
+    //配列に作ったmakerを格納,pinを保つ
+    var markers = [];
+    var displayInfo;
+    // 底イベントコントロール
+    var isBottom = false;
+    //表示したs_areaを格納
+    var s_area_array_showed = [];
+    let latlng = new google.maps.LatLng(34.699875, 135.493032);
+
+    //map作り
+    var opts = {
+            zoom:13,
+            center: latlng,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+    };
+
+    map1 = new google.maps.Map(document.getElementById('map'),opts);
+
+    opts = {
+        center:latlng
+    }
+
+    map1.setOptions(opts);
+
+
+        $('#reg').append($('<option>').html("------地域を選択してください------").val(0));
+        //デフォルトの表示
+        sendFirst();
+        
+        //都道府県が選択された時
+        $('#reg').change(function(){
+            $('#prefecture').empty();
+            $('#l_area').empty();
+            $('#s_area').empty();
+            const reg = $('#reg').val();
+
+            sendReg(reg);
+
+        });
+        //県が選択された時
+        $('#prefecture').change(function(){
+            const prefecture = $('#prefecture').val();
+            $('#l_area').empty();
+            $('#s_area').empty();
+            sendPref(prefecture);
+
+        });
+        //L area
+        $('#l_area').change(function(){
+            const l_area = $('#l_area').val();
+            $('#s_area').empty();
+            sendLarea(l_area);
+
+        });
+        //S srea
+        $('#s_area').change(function(){
+
+
+            clearMakrer();
+            markers = [];
+
+
+            sendSarea($('#s_area').val());
+        });
+
+
+        function sendFirst(){
+            // console.log('b');
+            $.ajax({
+                url: 'http://ec2-13-115-231-194.ap-northeast-1.compute.amazonaws.com',
+                type:'GET'
+            })
+            .done((data,type) => {
+                $(data).find('Region').each((index, element)=>{
+                            const cdTxt = $(element).attr('cd');
+                            const nameTxt = $(element).attr('name');
+                            $('#reg').append($('<option>').html(nameTxt).val(cdTxt));
+                });
+
+                //デフォルトホテル
+                $("#reg option[value='35']").prop('selected', true);
+                sendReg(35);
+                $("#prefecture option[value='270000']").prop('selected', true);
+                sendPref(270000);
+                sendLarea(272000);
+                sendSarea(272002);
+            })
+            .fail((data,type,status)=>{
+                console.log(status);
+            })
+        }
+        //地域
+        function sendReg(value){
+            // console.log(value);
+
+            $.ajax({
+                url: '//http://ec2-13-115-231-194.ap-northeast-1.compute.amazonaws.com',
+                data: {
+                    reg : value
+                },
+                type:'GET'
+
+            })
+            .done((data,type,status)=>{
+                $('#prefecture').append($('<option>').html("------選択してください------").val(0));
+                $(data).find('Prefecture').each((index, element)=>{
+                const cdTxt = $(element).attr('cd');
+                const nameTxt = $(element).attr('name');
+
+                $('#prefecture').append($('<option>').html(nameTxt).val(cdTxt));
+                });
+            })
+            .fail((data,type,status)=>{
+                console.log(status);
+            })
+        }
+
+        //都道府県
+        function sendPref(value){
+            // console.log(value);
+
+            $.ajax({
+                url: 'http://ec2-13-115-231-194.ap-northeast-1.compute.amazonaws.com',
+                data: {
+                    pref : value
+                },
+                type:'GET'
+
+            })
+            .done((data,type,status)=>{
+                $('#l_area').append($('<option>').html("------選択してください------").val(0));
+                $(data).find('LargeArea').each((index, element)=>{
+                const cdTxt = $(element).attr('cd');
+                const nameTxt = $(element).attr('name');
+
+                $('#l_area').append($('<option>').html(nameTxt).val(cdTxt));
+                });
+            })
+            .fail((data,type,status)=>{
+                console.log(status);
+            })
+        }
+
+        function sendLarea(value){
+            // console.log(value);
+            $.ajax({
+                url: 'http://ec2-13-115-231-194.ap-northeast-1.compute.amazonaws.com',
+                data: {
+                    larea : value
+                },
+                type:'GET'
+
+            })
+            .done((data,type,status)=>{
+                $('#s_area').append($('<option>').html("------選択してください------").val(0));
+                $(data).find('SmallArea').each((index, element)=>{
+                const cdTxt = $(element).attr('cd');
+                const nameTxt = $(element).attr('name');
+                $('#s_area').append($('<option>').html(nameTxt).val(cdTxt));
+                });
+            })
+            .fail((data,type,status)=>{
+                console.log(status);
+            })
+        }
+
+        
+        function sendSarea(value, isExtra = 0){
+            let hotelNames = [];
+            let addresses = [];
+            let hotelLinks = [];
+            //表示したs_areaを格納
+            s_area_array_showed.push(String(value));
+                                // reg : $('#reg').val(),
+                    // prefecture : $('#prefecture').val(),
+                    // larea : $('#l_area').val(),
+            $.ajax({
+                url: 'http://ec2-13-115-231-194.ap-northeast-1.compute.amazonaws.com',
+                data: {
+                    sarea : value
+                },
+                type:'GET'
+            })
+            .done((data,type,status)=>{
+
+                if(isExtra == 0){
+                    $("#output").empty();
+                }
+
+                // console.log("hotel情報");
+                // console.log(data);
+                $(data).find('Hotel').each((index, element)=>{
+                    let hotelName = $(element).find('HotelName').text();
+                    let post = $(element).find('PostCode').text();
+                    let address = $(element).find('HotelAddress').text();
+                    let hotelcatch = $(element).find('HotelCatchCopy').text();
+                    let copy = $(element).find('HotelCaption').text();
+                    let link = $(element).find('HotelDetailURL').text();
+                    let img = $(element).find('PictureURL').text();
+                    $("#output").append(
+                        "<section class='box'>"+
+                            "<h2>" + hotelName + "</h2>" +
+                            "<p>📮" + post + "</p>"+
+                            "<p id='address'>住所:" + address +"</p>" +
+                            "<p class='catch'>"+ hotelcatch +"</p>" +
+                            "<p>"+ copy +"</p>" +
+                            "<a href='"+ link +"' target='_blank'>offical site</a>" +
+                            "<p><img src='" + img + "'></p>" +
+                        "</section>"
+                    );
+                    addresses.push(address);
+                    hotelLinks.push(link);
+                    hotelNames.push(hotelName);
+                    isBottom = 1;
+                })
+
+
+
+
+                //すぺてのmakerを作り
+                let function_array = [];
+                for(var i=0;i<addresses.length;i++){
+                    function_array.push(geoMarker(addresses[i],hotelLinks[i],hotelNames[i]));
+                }
+                Promise.all(
+
+                    function_array
+
+                ).then((latlng)=>{
+
+
+                    let lats = [];
+                    let lngs = [];
+                    for(var i = 0; i < latlng.length; i++){
+                        lats.push(latlng[i].lat());
+                        lngs.push(latlng[i].lng());
+                    }
+                    lats.sort();
+                    let latitudeMax = lats[lats.length-1];
+                    let latitudeMin = lats[0];
+                    lngs.sort();
+                    let longitudeMax = lngs[lngs.length-1];
+                    let longitudeMin = lngs[0];
+                    let sw = new google.maps.LatLng(latitudeMax, longitudeMin);
+                    let ne = new google.maps.LatLng(latitudeMin, longitudeMax);
+                    let bounds = new google.maps.LatLngBounds(sw,ne);
+                    map1.fitBounds(bounds);
+
+
+                    //天気情報
+                    new Promise( (resolve , reject) => {
+                        let API_KEY = "711663300c8493b2043c0934f5cb9e23";
+                    let BASE_URL = "http://api.openweathermap.org/data/2.5/onecall";
+                    let APIRequest = BASE_URL + "?lat="+ (latitudeMax+latitudeMin)/2 + "&lon=" + (longitudeMax+longitudeMin)/2 + "&APPID="+ API_KEY;
+
+
+                    $.ajax({
+                        url: APIRequest,
+                        type:'GET'
+                    })
+                    .done((data,type,status)=>{
+
+                        $('#weather').empty();
+                        $("#weather").append(
+                            "<section id='weather-box' class='box　weather-box'>"+
+                                "<p><img src='http://openweathermap.org/img/wn/"+ data.current.weather[0].icon +"@2x.png'></p>"+
+                                "<p>現在温度" + Math.round(data.current.temp*10)/100 + "</p>" +
+                                "<p>体感温度" + Math.round(data.current.feels_like*10)/100 + "</p>" +
+                                "<p>uv" + data.current.uvi + "</p>" +
+                           
+                            "</section>"+
+
+                            "<section id='weather-box' class='box　weather-box2'>"+
+                                "<p><img src='http://openweathermap.org/img/wn/"+ data.daily[0].weather[0].icon +"@2x.png'></p>"+
+                                "<p>明日日中温度" + Math.round(data.daily[0].temp.day*10)/100 + "</p>" +
+                                "<p>明日体感温度" + Math.round(data.daily[0].feels_like.day*10)/100 + "</p>" +
+                                "<p>明日uv" + data.daily[0].uvi + "</p>" +
+                           
+                            "</section>"+
+
+                            "<section id='weather-box' class='box　weather-box2'>"+
+                                "<p><img src='http://openweathermap.org/img/wn/"+ data.daily[1].weather[0].icon +"@2x.png'></p>"+
+                                "<p>明後日日中温度" + Math.round(data.daily[1].temp.day*10)/100 + "</p>" +
+                                "<p>明後日体感温度" + Math.round(data.daily[1].feels_like.day*10)/100 + "</p>" +
+                                "<p>明後日uv" + data.daily[1].uvi + "</p>" +
+                           
+                            "</section>"+
+
+                            "<section id='weather-box' class='box　weather-box2'>"+
+                                "<p><img src='http://openweathermap.org/img/wn/"+ data.daily[2].weather[0].icon +"@2x.png'></p>"+
+                                "<p>明々後日日中温度" + Math.round(data.daily[2].temp.day*10)/100 + "</p>" +
+                                "<p>明々後日体感温度" + Math.round(data.daily[2].feels_like.day*10)/100 + "</p>" +
+                                "<p>明々後日uv" + data.daily[2].uvi + "</p>" +
+                           
+                            "</section>"
+                        );
+                    })
+                    .fail((data,type,status)=>{
+                        console.log(status);
+                    })
+
+
+
+
+                    })//weather promise
+                 
+
+                })
+            })
+            .fail((data,type,status)=>{
+                console.log(status);
+            })
+        }
+
+
+        $('select').on('change',()=>{
+        if($('select').val() == 0){
+            let opt = {
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            }
+            map1.setOptions(opt);
+        }
+        if($('select').val() == 1){
+            let opt = {
+                mapTypeId: google.maps.MapTypeId.SATELLITE
+            }
+            map1.setOptions(opt);
+        }
+        if($('select').val() == 2){
+            let opt = {
+                mapTypeId: google.maps.MapTypeId.HYBRID
+            }
+            map1.setOptions(opt);
+        }
+        if($('select').val() == 3){
+            let opt = {
+                mapTypeId: google.maps.MapTypeId.TERRAIN
+            }
+            map1.setOptions(opt);
+        }
+    })
+   
+        $('input[name="mapButton"]').on('change', ()=>{
+            let opt;
+            if($('input[name="mapButton"]:checked').val() === "true"){
+                opt = {
+                    mapTypeControl : true
+                }
+                
+                
+            }else{
+                opt = {
+                    mapTypeControl : false
+                }
+            }
+            map1.setOptions(opt);
+        })
+        
+        $('input[name="fullScreen"]').on('change', ()=>{
+            let opt;
+            if($('input[name="fullScreen"]:checked').val() === "true"){
+                opt = {
+                    fullscreenControl : true
+                }
+                
+                
+            }else{
+                opt = {
+                    fullscreenControl : false
+                }
+            }
+            map1.setOptions(opt);
+        })
+        
+        $('input[name="streetViewControl"]').on('change', ()=>{
+            let opt;
+            if($('input[name="streetViewControl"]:checked').val() === "true"){
+                opt = {
+                    streetViewControl : true
+                }
+                
+                
+            }else{
+                opt = {
+                    streetViewControl : false
+                }
+            }
+            map1.setOptions(opt);
+        })
+
+        $('input[name="zoomControl"]').on('change', ()=>{
+            let opt;
+            if($('input[name="zoomControl"]:checked').val() === "true"){
+                opt = {
+                    zoomControl : true
+                }
+                
+                
+            }else{
+                opt = {
+                    zoomControl : false
+                }
+            }
+            map1.setOptions(opt);
+        })
+    
+
+        function geoMarker(){
+            let inputText = 　arguments[0];
+            let link      =   arguments[1];
+            let hotelName = arguments[2];
+           return new Promise(function(resolve,reject){
+                //ジオコーディング
+               var geocoder;
+                // alert(inputText);
+                var geocoder = new google.maps.Geocoder();
+
+                geocoder.geocode({'address': inputText},
+                    (result,status)=>{
+                        if(status === google.maps.GeocoderStatus.OK){
+                            latlng = result[0].geometry.location;
+                            var address = result[0].formatted_address;
+
+                            //Maker pinを作り
+                            var marker = new google.maps.Marker({
+                                position: latlng,
+                                map:map1,
+                                icon: "http://maps.google.com/mapfiles/ms/micons/blue-dot.png"
+                                
+                            });
+                            var infoWindow = new google.maps.InfoWindow({
+
+                                alignBottom: true, // 位置の基準
+                                position: latlng, // 位置の座標
+                                boxClass: "gmap-info-window", // 生成したDOMをラップするdivのclass名
+                                closeBoxMargin: "-15px -20px 0px 0px", // 閉じるボタンの位置調整
+                                closeBoxURL: 'https://82mou.github.io/infobox/img/close.png', // 閉じるボタンの画像パス
+                                content: '<div id="gmap-info-window"><p id="gmap-info-window-title">'+ hotelName +'</p><p id="gmap-info-window-address">'+ inputText +'</p><a href="'+link+'" target="_blank">Link</a></div>' // 吹き出しに表示する内容
+                                });
+                            //使いまわさない、このmarkerにイベントをかける
+                            marker.addListener('click', function() { // マーカーをクリックしたとき
+                                if(displayInfo){
+                                    displayInfo.close();
+                                }
+                                displayInfo = infoWindow;
+
+                                infoWindow.open(map1, marker); // 吹き出しの表示
+
+
+                            });
+                            markers.push(marker);
+                            //promiseで実行するための
+                            resolve(latlng);
+                        }else{
+                            alert(status);
+                        };//if
+                    });//geocorde
+           })//promise
+        }//geomarker
+        
+        $('.button').on('click',()=>{
+            let inputText = $('.geoInput').val();
+            geoMarker(inputText).then((latlng)=>{
+                map1.setCenter(latlng);
+            });
+        })
+    
+        function clearMakrer(){
+            for(let i = 0;i< markers.length ; i++){
+                    markers[i].setMap(null);
+                }
+        }
+
+        $('.clear-button').on('click',()=>{
+
+            clearMakrer();
+
+        })  
+        //検索欄でenter押せるように
+        $('.geoInput').bind('keypress',(e)=>{
+        if(e.which == 13){
+            let inputText = $('.geoInput').val();
+            geoMarker(inputText).then((latlng)=>{
+                map1.setCenter(latlng);
+            });
+            
+
+
+
+        }
+    })
+    // そこに足した時の処理
+    $(window).scroll(
+        function() {
+            var scrollTop = $(this).scrollTop();
+            var scrollHeight = $(document).height();
+            var windowHeight = $(this).height();
+            if (scrollTop >= 2000 && scrollTop + windowHeight == scrollHeight) {
+                console.log(scrollTop);
+                if(isBottom == 1){
+                    let s_area_array = [];
+                    
+                    //今displayしているs_areaとまたdisplayしていないs_area
+                    $('[name=s_area] option').each(function() {
+                        if($(this).val !== '0'){
+                            s_area_array.push($(this).val());
+                        }
+
+                    });
+                    //0をバイバイする
+                    function isNotZero(value){
+                        return value > 0;
+                    }
+                    s_area_array = s_area_array.filter(isNotZero);
+
+                    //表示してない地域を格納
+                    let diff = $(s_area_array).not(s_area_array_showed).toArray();
+
+                    if(diff.length > 0){                    
+                        for(let i=0;i < diff.length; i++){
+                            setTimeout(sendSarea(diff[i],1),3500);
+                        }
+                    }
+                    else{
+                        $('footer').removeClass("none");
+                    }
+
+                }
+            }
+        }
+    );
+    
+
+    })
+</script>
+</body>
+</html>
